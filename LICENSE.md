@@ -11,3 +11,6 @@ Please see https://www.mozilla.org/en-US/MPL/2.0/ or the attached file
 
 Please see https://www.gnu.org/licenses/old-licenses/lgpl-2.1 or the attached file
 [LGPL-2.1.md](src/main/resources/META-INF/LGPL-2.1.md).
+
+### Powered By OpenPDF
+https://github.com/LibrePDF/OpenPDF
