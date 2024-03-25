@@ -1,13 +1,17 @@
 package com.technobee.technopdf.services;
 
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 
+import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -69,8 +73,39 @@ public class PDFDocument {
         if (settings.isStrikethrough()) {
             font.setStyle(font.getStyle() | Font.STRIKETHRU);
         }
-        Paragraph p = new Paragraph(data, font);
+        Paragraph p = new Paragraph(StringUtils.EMPTY,font);
+        if(data.contains("<b>")){
+            setChunksBold(p, data, font);
+        }else{
+            p = new Paragraph(data, font);
+        }
+        if(settings.getIndentation() > 0){
+            p.setLeading(0, 2f);
+        }
         return p;
+    }
+    private void setChunksBold(Paragraph p, String data, Font font) {
+        int defaultStyle = font.getStyle();
+        String[] words = data.split(" ");
+        int wordindex = 0;
+        boolean isbold = false;
+        for (String word : words) {
+            if(word.startsWith("<b>")){
+                isbold = true;
+                font.setStyle(PDF.TextStyle.BOLD.style);
+                word = word.replaceAll("<b>", "");
+            }
+            if(word.endsWith("</b>")){
+                word = word.replaceAll("</b>", "");
+                isbold = false;
+            }
+            wordindex++;
+            word = wordindex == words.length ? word : word + " ";
+            p.add(new Chunk(word, font));
+            if(!isbold){
+                font.setStyle(defaultStyle);
+            }
+        }
     }
     protected void setCellBorder(PdfPCell cell, CellSettings settings){
         float [] borders = PDFUtil.getBorders(settings.getBorder());
