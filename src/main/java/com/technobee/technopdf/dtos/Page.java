@@ -6,17 +6,17 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Builder.Default;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PDFRequest {
+public class Page {
     @Default
-    private PageSettings pagesettings = new PageSettings();
+    private TableSettings table = new TableSettings();
     @Default
-    private List<Page> pages = new ArrayList<>(Collections.singletonList(new Page()));
+    private List<CellData> contents = new ArrayList<>(Collections.singletonList(new CellData()));
 }
