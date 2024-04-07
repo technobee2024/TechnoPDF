@@ -52,7 +52,7 @@ public class PDF {
         ITALIC(Font.ITALIC),
         BOLDITALIC(Font.BOLDITALIC);
     
-        private final int style;
+        public final int style;
     
         TextStyle(int style) {
             this.style = style;

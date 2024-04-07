@@ -10,6 +10,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfWriter;
 import com.technobee.technopdf.dtos.CellData;
 import com.technobee.technopdf.dtos.PDFRequest;
+import com.technobee.technopdf.dtos.Page;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,15 +21,22 @@ public class PDFGenerator extends PDFDocument {
     public byte[] pdfReport(PDFRequest request){
         ByteArrayOutputStream outputStream = null;
         try {
-            initializeDocument(request.getPage());
+            initializeDocument(request.getPagesettings());
             outputStream = new ByteArrayOutputStream();
             PdfWriter.getInstance(document, outputStream);
             document.open();
-            initializeTable(request.getTable());
-            for (CellData celldata : request.getContents()) {
-                appendCell(celldata);
+            int pageno = 1;
+            for (Page page : request.getPages()) {
+                if(pageno > 1){
+                    document.newPage();
+                }
+                initializeTable(page.getTable());
+                for (CellData celldata : page.getContents()) {
+                    appendCell(celldata);
+                }
+                document.add(table);
+                pageno ++;
             }
-            document.add(table);
             document.close();
             byte[] pdfBytes = outputStream.toByteArray();
             return pdfBytes;
