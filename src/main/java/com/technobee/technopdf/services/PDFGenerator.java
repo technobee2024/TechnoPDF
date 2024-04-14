@@ -2,6 +2,8 @@ package com.technobee.technopdf.services;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.springframework.stereotype.Service;

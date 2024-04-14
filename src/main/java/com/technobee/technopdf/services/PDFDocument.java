@@ -10,6 +10,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -41,6 +42,9 @@ public class PDFDocument {
         CellSettings settings = cellData.getSettings();
         Paragraph celltext = createParagraph(cellData.getData().toString(), settings);
         PdfPCell cell = new PdfPCell(celltext);
+        if(settings.getLeading() > 0){
+            cell.setLeading(settings.getLeading(), 1.2f);
+        }
         cell.setColspan(settings.getColspan());
         cell.setRowspan(settings.getRowspan());
         setCellBorder(cell, settings);
@@ -71,39 +75,38 @@ public class PDFDocument {
         if (settings.isStrikethrough()) {
             font.setStyle(font.getStyle() | Font.STRIKETHRU);
         }
-        Paragraph p = new Paragraph(StringUtils.EMPTY,font);
+        Paragraph p = new Paragraph();
         if(data.contains("<b>")){
             setChunksBold(p, data, font);
         }else{
             p = new Paragraph(data, font);
         }
-        if(settings.getIndentation() > 0){
-            p.setLeading(0, 2f);
-        }
         return p;
     }
+    
     private void setChunksBold(Paragraph p, String data, Font font) {
-        int defaultStyle = font.getStyle();
         String[] words = data.split(" ");
-        int wordindex = 0;
-        boolean isbold = false;
+        Phrase phrase = new Phrase("");
         for (String word : words) {
             if(word.startsWith("<b>")){
-                isbold = true;
-                font.setStyle(PDF.TextStyle.BOLD.style);
                 word = word.replaceAll("<b>", "");
-            }
+                p.add(phrase);
+                phrase = new Phrase("");
+                Font fontBold = new Font(font);
+                fontBold.setStyle(1);
+                phrase.setFont(fontBold);
+            } 
             if(word.endsWith("</b>")){
                 word = word.replaceAll("</b>", "");
-                isbold = false;
+                phrase.add(word + " ");
+                p.add(phrase);
+                phrase = new Phrase("");
+                phrase.setFont(font);
+                continue;
             }
-            wordindex++;
-            word = wordindex == words.length ? word : word + " ";
-            p.add(new Chunk(word, font));
-            if(!isbold){
-                font.setStyle(defaultStyle);
-            }
+            phrase.add(word + " ");
         }
+        p.add(phrase);
     }
     protected void setCellBorder(PdfPCell cell, CellSettings settings){
         float [] borders = PDFUtil.getBorders(settings.getBorder());

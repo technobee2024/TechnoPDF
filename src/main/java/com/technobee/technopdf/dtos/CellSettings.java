@@ -40,6 +40,8 @@ public class CellSettings {
     @Default
     private float indentation = 0;
     @Default
+    private float leading = 0;
+    @Default
     private boolean underline = false;
     @Default
     private boolean strikethrough = false;
