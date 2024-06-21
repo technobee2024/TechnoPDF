@@ -38,7 +38,8 @@ public class PDF {
         LINEBREAK("linebreak"),
         PAGEBREAK("pagebreak"),
         BARCODE("barcode"),
-        QRCODE("qrcode");
+        QRCODE("qrcode"),
+        REPORT("report");
     
         private final String type;
     

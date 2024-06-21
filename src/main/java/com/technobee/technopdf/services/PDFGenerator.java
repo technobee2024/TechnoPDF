@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.springframework.stereotype.Service;
 
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import com.technobee.technopdf.dtos.CellData;
 import com.technobee.technopdf.dtos.PDFRequest;

@@ -14,6 +14,7 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfTable;
 import com.technobee.technopdf.dtos.CellData;
 import com.technobee.technopdf.dtos.CellSettings;
 import com.technobee.technopdf.dtos.PageSettings;
@@ -33,12 +34,33 @@ public class PDFDocument {
         table = new PdfPTable(tablesettings.getColumns());
         table.setWidthPercentage(100);
     }
+    protected PdfPTable initializeSubReport(TableSettings tablesettings){
+        PdfPTable child = new PdfPTable(tablesettings.getColumns());
+        child.setWidthPercentage(100);
+        return child;
+    }
     protected void appendCell(CellData cellData){
         if(cellData.getType().equals(PDF.CellType.TEXT.name())){
-            createTextCell(cellData);
+            table.addCell(createTextCell(cellData));
+        }else if(cellData.getType().equals(PDF.CellType.REPORT.name())){
+
+            PdfPTable childTable = initializeSubReport(cellData.getSubreport().getTable());
+            
+            for (CellData childcell : cellData.getSubreport().getContents()) {
+                appendChildCell(childcell, childTable);
+            }
+
+            PdfPCell cell = createTextCell(cellData);
+            cell.addElement(childTable);
+            table.addCell(cell);
         }
     }
-    protected void createTextCell(CellData cellData){
+    protected void appendChildCell(CellData cellData, PdfPTable childTable){
+        if(cellData.getType().equals(PDF.CellType.TEXT.name())){
+            childTable.addCell(createTextCell(cellData));
+        }
+    }
+    protected PdfPCell createTextCell(CellData cellData){
         CellSettings settings = cellData.getSettings();
         Paragraph celltext = createParagraph(cellData.getData().toString(), settings);
         PdfPCell cell = new PdfPCell(celltext);
@@ -53,7 +75,7 @@ public class PDFDocument {
         cell.setVerticalAlignment(PDF.CellAlignment.getAlignment(settings.getTextvalign()));
         cell.setHorizontalAlignment(PDF.CellAlignment.getAlignment(settings.getTextalign()));
         cell.setUseBorderPadding(true);
-        table.addCell(cell);
+        return cell;
     }
     protected Paragraph createParagraph(String data, CellSettings settings){
         Font font = null;

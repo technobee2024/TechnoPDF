@@ -15,6 +15,8 @@ import lombok.Builder.Default;
 public class CellData {
     private Object data;
     @Default
+    private Page subreport = null;
+    @Default
     private String type = PDF.CellType.TEXT.name();
     @Default
     private CellSettings settings = new CellSettings();
