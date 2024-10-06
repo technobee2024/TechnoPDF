@@ -3,6 +3,7 @@ package com.technobee.technopdf.services;
 import java.awt.Color;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 
 import com.lowagie.text.Chunk;
@@ -63,6 +64,7 @@ public class PDFDocument {
     protected PdfPCell createTextCell(CellData cellData){
         CellSettings settings = cellData.getSettings();
         Paragraph celltext = createParagraph(cellData.getData().toString(), settings);
+        
         PdfPCell cell = new PdfPCell(celltext);
         if(settings.getLeading() > 0){
             cell.setLeading(settings.getLeading(), 1.2f);
@@ -101,6 +103,9 @@ public class PDFDocument {
         if(data.contains("<b>")){
             setChunksBold(p, data, font);
         }else{
+            if(data.contains("<br>")){
+                data = data.replaceAll("<br>", "\r\n");
+            }
             p = new Paragraph(data, font);
         }
         return p;
