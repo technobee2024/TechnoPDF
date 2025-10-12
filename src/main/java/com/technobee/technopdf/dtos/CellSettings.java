@@ -42,6 +42,12 @@ public class CellSettings {
     @Default
     private float leading = 0;
     @Default
+    private float imageTargetWidth = 0;
+    @Default
+    private float imageTargetHeight = 0;
+    @Default
+    private float imageSizePercentage = 0;
+    @Default
     private boolean underline = false;
     @Default
     private boolean strikethrough = false;

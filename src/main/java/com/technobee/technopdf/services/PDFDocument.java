@@ -3,10 +3,8 @@ package com.technobee.technopdf.services;
 import java.awt.Color;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
-
-import com.lowagie.text.Chunk;
+import com.lowagie.text.Image;
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
@@ -15,7 +13,6 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfTable;
 import com.technobee.technopdf.dtos.CellData;
 import com.technobee.technopdf.dtos.CellSettings;
 import com.technobee.technopdf.dtos.PageSettings;
@@ -43,6 +40,8 @@ public class PDFDocument {
     protected void appendCell(CellData cellData){
         if(cellData.getType().equals(PDF.CellType.TEXT.name())){
             table.addCell(createTextCell(cellData));
+        }else if(cellData.getType().equals(PDF.CellType.IMAGE.name())){
+            table.addCell(createImageCell(cellData));
         }else if(cellData.getType().equals(PDF.CellType.REPORT.name())){
 
             PdfPTable childTable = initializeSubReport(cellData.getSubreport().getTable());
@@ -59,7 +58,68 @@ public class PDFDocument {
     protected void appendChildCell(CellData cellData, PdfPTable childTable){
         if(cellData.getType().equals(PDF.CellType.TEXT.name())){
             childTable.addCell(createTextCell(cellData));
+        }else if(cellData.getType().equals(PDF.CellType.IMAGE.name())){
+            childTable.addCell(createImageCell(cellData));
         }
+    }
+    
+    protected PdfPCell createImageCell(CellData cellData){
+        CellSettings settings = cellData.getSettings();
+        PdfPCell cell = new PdfPCell();
+        try {
+            String data = cellData.getData() == null ? "" : cellData.getData().toString();
+            if(StringUtils.isBlank(data)){
+                Paragraph p = createParagraph("[image]", settings);
+                cell = new PdfPCell(p);
+            } else {
+                java.net.URI uri = java.net.URI.create(data);
+                Image img = Image.getInstance(uri.toURL());
+                // scale using settings: imageTargetWidth, imageTargetHeight, imageSizePercentage
+                float targetW = settings.getImageTargetWidth();
+                float targetH = settings.getImageTargetHeight();
+                float percent = settings.getImageSizePercentage();
+
+                float origW = img.getWidth();
+                float origH = img.getHeight();
+
+                if (targetW > 0 && targetH > 0) {
+                    // both provided: set exact dimensions
+                    img.scaleAbsolute(targetW, targetH);
+                } else if (targetW > 0) {
+                    // set width, keep aspect ratio
+                    float newH = (origH * targetW) / origW;
+                    img.scaleAbsolute(targetW, newH);
+                } else if (targetH > 0) {
+                    // set height, keep aspect ratio
+                    float newW = (origW * targetH) / origH;
+                    img.scaleAbsolute(newW, targetH);
+                } else if (percent > 0) {
+                    // percent is provided as e.g., 50 for 50%
+                    img.scalePercent(percent);
+                } else {
+                    // default fallback
+                    img.scaleToFit(200f, 200f);
+                }
+                cell = new PdfPCell(img, false);
+            }
+        } catch (Exception e){
+            // on error, show placeholder text
+            Paragraph p = createParagraph("[image not available]", settings);
+            cell = new PdfPCell(p);
+        }
+
+        if(settings.getLeading() > 0){
+            cell.setLeading(settings.getLeading(), 1.2f);
+        }
+        cell.setColspan(settings.getColspan());
+        cell.setRowspan(settings.getRowspan());
+        setCellBorder(cell, settings);
+        setCellPadding(cell, settings);
+        cell.setBackgroundColor(PDFUtil.getRGBColor(settings.getBackgroundrgb(), PDF.DEFAULT_BACK_COLOR));
+        cell.setVerticalAlignment(PDF.CellAlignment.getAlignment(settings.getTextvalign()));
+        cell.setHorizontalAlignment(PDF.CellAlignment.getAlignment(settings.getTextalign()));
+        cell.setUseBorderPadding(true);
+        return cell;
     }
     protected PdfPCell createTextCell(CellData cellData){
         CellSettings settings = cellData.getSettings();
