@@ -145,8 +145,8 @@ public class PDFDocument {
             font = FontFactory.getFont("Tahoma", BaseFont.WINANSI, settings.getFontsize(), PDF.TextStyle.getStyle(settings.getFontstyle()), PDFUtil.getRGBColor(settings.getColorrgb(), PDF.DEFAULT_TEXT_COLOR));
         }else{
             font = new Font(PDF.FontFamily.getFamily(
-                settings.getFamily()), 
-                settings.getFontsize(), 
+                settings.getFamily()),
+                settings.getFontsize(),
                 PDF.TextStyle.getStyle(settings.getFontstyle()),
                 PDFUtil.getRGBColor(settings.getColorrgb(), PDF.DEFAULT_TEXT_COLOR)
             );
@@ -159,13 +159,13 @@ public class PDFDocument {
         if (settings.isStrikethrough()) {
             font.setStyle(font.getStyle() | Font.STRIKETHRU);
         }
+        if(data.contains("<br>")){
+            data = data.replaceAll("<br>", "\r\n");
+        }
         Paragraph p = new Paragraph();
         if(data.contains("<b>")){
             setChunksBold(p, data, font);
         }else{
-            if(data.contains("<br>")){
-                data = data.replaceAll("<br>", "\r\n");
-            }
             p = new Paragraph(data, font);
         }
         return p;
