@@ -7,7 +7,7 @@ import com.lowagie.text.Rectangle;
 
 public class PDF {
     public static String DEFAULT_TEXT_COLOR = "0,0,0";
-    public static String DEFAULT_BACK_COLOR = "255,255,255";
+    public static String DEFAULT_BACK_COLOR = ""; // transparent
     public static String DEFAULT_BORDER = "0,0,0,0";
     public static String DEFAULT_PADDING = "5,3,5,3";
     public static String DEFAULT_BORDER_COLOR = "0,0,0";

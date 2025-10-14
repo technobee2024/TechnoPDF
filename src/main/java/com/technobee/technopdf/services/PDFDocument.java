@@ -115,7 +115,10 @@ public class PDFDocument {
         cell.setRowspan(settings.getRowspan());
         setCellBorder(cell, settings);
         setCellPadding(cell, settings);
-        cell.setBackgroundColor(PDFUtil.getRGBColor(settings.getBackgroundrgb(), PDF.DEFAULT_BACK_COLOR));
+        Color bgColor = PDFUtil.getRGBColor(settings.getBackgroundrgb(), PDF.DEFAULT_BACK_COLOR);
+        if (bgColor != null) {
+            cell.setBackgroundColor(bgColor);
+        }
         cell.setVerticalAlignment(PDF.CellAlignment.getAlignment(settings.getTextvalign()));
         cell.setHorizontalAlignment(PDF.CellAlignment.getAlignment(settings.getTextalign()));
         cell.setUseBorderPadding(true);

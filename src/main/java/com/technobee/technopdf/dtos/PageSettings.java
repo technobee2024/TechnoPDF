@@ -21,4 +21,6 @@ public class PageSettings {
     private float margintop = 50f;
     @Default
     private float marginbottom = 50f;
+    @Default
+    private WatermarkSettings watermark = new WatermarkSettings();
 }

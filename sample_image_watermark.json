@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "text": "SAMPLE",
+  "fontSize": 60.0,
+  "opacity": 0.15,
+  "rotation": 45.0,
+  "imageUrl": "https://example.com/watermark.png",
+  "imageTargetWidth": 200.0,
+  "imageTargetHeight": 200.0,
+  "imageSizePercentage": 0.0
+}

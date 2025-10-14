@@ -26,7 +26,14 @@ public class PDFGenerator extends PDFDocument {
         try {
             initializeDocument(request.getPagesettings());
             outputStream = new ByteArrayOutputStream();
-            PdfWriter.getInstance(document, outputStream);
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+
+            // Add watermark event handler if watermark is enabled
+            if (request.getPagesettings().getWatermark().isEnabled()) {
+                WatermarkEventHandler watermarkHandler = new WatermarkEventHandler(request.getPagesettings().getWatermark());
+                writer.setPageEvent(watermarkHandler);
+            }
+
             document.open();
             int pageno = 1;
             for (Page page : request.getPages()) {
@@ -52,6 +59,6 @@ public class PDFGenerator extends PDFDocument {
                 log.error("Exception while closing outputStream pdfReport(): {}", e);
             }
         }
-        return null; 
+        return null;
     }
 }

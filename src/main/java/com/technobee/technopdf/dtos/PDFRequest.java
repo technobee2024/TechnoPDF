@@ -19,4 +19,6 @@ public class PDFRequest {
     private PageSettings pagesettings = new PageSettings();
     @Default
     private List<Page> pages = new ArrayList<>(Collections.singletonList(new Page()));
+    @Default
+    private WatermarkSettings watermark = new WatermarkSettings();
 }

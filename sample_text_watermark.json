@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "text": "CONFIDENTIAL",
+  "fontSize": 60.0,
+  "opacity": 0.15,
+  "rotation": 45.0,
+  "imageUrl": "",
+  "imageTargetWidth": 0.0,
+  "imageTargetHeight": 0.0,
+  "imageSizePercentage": 0.0
+}

@@ -10,6 +10,9 @@ public class PDFUtil {
     private static final String RGB_PATTERN = "^\\d{1,3},\\d{1,3},\\d{1,3}$";
 
     public static Color getRGBColor(String colorRGB, String fallbackRGB) {
+        if (colorRGB == null || colorRGB.trim().isEmpty()) {
+            return null; // transparent
+        }
         Pattern pattern = Pattern.compile(RGB_PATTERN);
         Matcher matcher = pattern.matcher(colorRGB);
         String[] components = null;
@@ -27,6 +30,9 @@ public class PDFUtil {
                    blue >= 0 && blue <= 255;
         }
         if(!isvalid){
+            if (fallbackRGB == null || fallbackRGB.trim().isEmpty()) {
+                return null; // transparent
+            }
             components = fallbackRGB.split(",");
             red = Integer.parseInt(components[0]);
             green = Integer.parseInt(components[1]);
